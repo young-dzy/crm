@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="商机工作台项目介绍：面向医疗器械 B2B 大客户经营，用可信数据约束受控 Agent，并以评测回归保证商机分析与跟进质量。" />
+  <title>项目介绍 · 商机工作台</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23064e3b'/%3E%3Cpath d='M14 16h9.5L32 28.5 40.5 16H50L35.8 35.5V48h-7.6V35.5L14 16Z' fill='%23ecfdf5'/%3E%3Ccircle cx='49' cy='15' r='4' fill='%2322c55e'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="about.css" />
+</head>
+<body>
+  <header class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="about.html">
+        <span class="brand-mark">
+          <svg width="18" height="18" viewBox="0 0 64 64" aria-hidden="true"><path d="M14 16h9.5L32 28.5 40.5 16H50L35.8 35.5V48h-7.6V35.5L14 16Z" fill="#ecfdf5"/><circle cx="49" cy="15" r="4" fill="#22c55e"/></svg>
+        </span>
+        商机工作台
+      </a>
+      <div class="nav-actions">
+        <a class="btn primary" href="index.html#/app/inbox">进入演示</a>
+        <a class="btn" href="mobile.html#/app/inbox">手机端</a>
+        <button class="btn ghost" id="toggle-theme" type="button">切换主题</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="kicker">医疗器械 B2B 大客户经营</div>
+      <h1>可信数据、受控执行与评测回归</h1>
+      <p class="lead">面向上三甲医院、区域医疗集团与经销商协同场景：先把医院、科室、设备、注册证与招采事实保存下来，再让 Agent 在授权范围内分析商机、核对资质并起草跟进，对客动作始终保留人工确认。</p>
+      <p class="note">这是 young 的个人演示工作台。页面按真实业务结构搭建，使用虚构医院与商机数据，纯静态运行，不会调用真实模型，也不会对外发送消息。</p>
+    </section>
+
+    <section>
+      <h2>要解决什么问题</h2>
+      <p>医疗器械大客户经营周期长、角色多：院方企业微信、经销商群、招采平台与设备科拜访记录分散在不同渠道；注册证、UDI、授权链、EMC 报告和售后 SLA 又经常与具体投标项目绑在一起。客户偏好容易遗漏，资质材料可能过期，若让大模型直接承诺交期、价格或临床效果，还会带来合规风险。</p>
+      <p>系统的做法是：大客户经理选定医院或项目范围后，由 Agent 读取已确认的院方记忆、注册证与招采依据，分析商机并产出带来源、缺失材料和下一步建议的报告。临床评估、招采和合同推进由人工接续；对客消息、价格承诺与高敏写回必须经过独立确认，执行轨迹与评测回归用于定位事实遗漏和流程失败。</p>
+    </section>
+
+    <section>
+      <h2>系统设计架构全景</h2>
+      <p>将院方交互、受控 Agent Harness、注册与招采证据面、客户记忆和评测回归明确划界：记忆与知识摘要仅作参考，CRM 始终保留医院、设备、商机与合同事实，对客和高敏操作必须经过提案人审。</p>
+      <div class="diagram-box" id="about-arch-svg"></div>
+    </section>
+
+    <section>
+      <h2>持久化 Run 与动作提案状态机</h2>
+      <p>模型单回合结束只是中间态。异步队列、租约校验、6 字段带快照可逆写、人审挂起续跑与写回不确定停机共同保证长任务可控收敛。</p>
+      <div class="diagram-box" id="about-fsm-svg"></div>
+    </section>
+
+    <section>
+      <h2>核心能力</h2>
+      <div class="cards">
+        <article class="card">
+          <h3>医疗主数据与权限隔离</h3>
+          <p>把医院、科室、联系人、设备、商机、招采项目与合同能力封装为统一工具契约，入参强类型校验，并在入口绑定组织租户与角色权限。Agent 只能使用已发布白名单中的工具，跨医院查询遵守行级隔离和操作审计。</p>
+        </article>
+        <article class="card">
+          <h3>院方画像记忆</h3>
+          <p>医院组织、设备装机、合同和招采事实保存在数据库中作为真源；科室采购偏好、预算边界、联系时间窗和沟通禁忌由长期记忆系统提炼。日常沟通增量写入，夜间清洗去重；临时项目偏好会衰减，院方联系窗口与合规约束则持久锁定。</p>
+        </article>
+        <article class="card">
+          <h3>注册与投标证据可追溯</h3>
+          <p>NMPA 注册证、UDI、说明书、检测报告、授权链和售后 SLA 通过检索层读取，并校验资料白名单与项目授权范围。引用会记录内容指纹、证照有效期和文档版本；过期或未授权依据会被屏蔽，避免用旧证照或渠道授权参与投标。</p>
+        </article>
+        <article class="card">
+          <h3>长周期商机受控执行</h3>
+          <p>大型设备商机往往跨越临床评估、院内论证、招采、合同与装机验收。系统用显式状态机把每回合拆成意图识别、资质校验、结果观测和副作用提议，任务队列负责续跑；满足业务验收条件后才进入终态。</p>
+        </article>
+        <article class="card">
+          <h3>临床、商务与资质交叉核验</h3>
+          <p>对临床需求、设备交付可行性和招采资质合规性做并行只读分析，再交叉比对注册证有效期、授权链与项目字段。一旦发现资质缺失、报价越权或临床依据不足，就挂起自动推导，生成差异报告交由人工裁决。</p>
+        </article>
+        <article class="card">
+          <h3>评测与持续改进</h3>
+          <p>用规则校验加上语义评审，覆盖医院范围查询、注册证引用、工具调用、招采审批、证据溯源和冲突识别。真实失败案例沉淀为回归集；改进链路只允许调整工具说明、专家分工、上下文装配和记忆召回，权限隔离与外发审批规则保持锁定。</p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>人机协同与安全边界</h2>
+      <ul class="list">
+        <li>
+          <strong>对客动作先提案、后确认</strong>
+          <span>Agent 的写入和对客沟通只会生成提案，必须经大客户经理或销售主管确认后才落地，避免擅自修改招采阶段、价格承诺或直接发信。</span>
+        </li>
+        <li>
+          <strong>白名单写入与一键撤销</strong>
+          <span>Agent 仅可自动修改 6 个低敏感运营辅助字段，写入前保存快照。人工撤销时会比对是否已被大客户经理改过，避免覆盖最新的人工修改。</span>
+        </li>
+        <li>
+          <strong>策略版本与紧急熔断</strong>
+          <span>主管调整院方沟通策略时会生成新版本，并终止旧草稿继续执行。必要时可按全租户或单家医院立即阻断尚未发出的对客动作。</span>
+        </li>
+        <li>
+          <strong>审批防重与并发保护</strong>
+          <span>批准、拒绝和暂停在重试时复用同一请求键，避免网络抖动导致重复执行；长耗时写入还会校验队列租约，拦截超时旧进程的迟到写回。</span>
+        </li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>界面与工程</h2>
+      <ul class="list">
+        <li>
+          <strong>流式执行时间线</strong>
+          <span>工作台按事件顺序展示思考、工具调用和回执。页面刷新、断网重连或任务结束后再打开，都能完整回放执行过程。</span>
+        </li>
+        <li>
+          <strong>移动端与多端一致</strong>
+          <span>界面适配软键盘和横幅高度，并处理中文输入法组合态。医疗设备商机看板用版本校验防止多端同时改写招采阶段时的脏更新。</span>
+        </li>
+        <li>
+          <strong>统一领域服务与异步执行</strong>
+          <span>产品界面与 Agent 运行时共享同一套领域能力，数据层按组织做行级隔离。长任务先落库再入队，由独立 Worker 执行，避免页面超时悬挂。</span>
+        </li>
+      </ul>
+    </section>
+
+    <div class="cta">
+      <h2>打开演示</h2>
+      <p>演示覆盖院方消息、医疗商机工作台、客户记忆、注册与招采材料和设备商机漏斗。你可以从桌面或手机进入，数据同步在本机浏览器中。</p>
+      <div class="cta-actions">
+        <a class="btn" href="index.html#/app/inbox">进入桌面演示</a>
+        <a class="btn ghost" href="mobile.html#/app/inbox">打开手机端</a>
+      </div>
+    </div>
+
+    <footer>young · 商机工作台 · 项目介绍与静态交互演示</footer>
+  </main>
+
+  <script src="welcome.js"></script>
+  <script>
+    (function () {
+      var KEY = "young_demo_intro_seen_v1";
+      var KEY2 = "young_demo_arch_intro_v2";
+      var STATE = "young_demo_state_v1";
+      try { localStorage.setItem(KEY, "1"); localStorage.setItem(KEY2, "1"); } catch (e) {}
+
+      if (window.CrmArchDiagrams) {
+        var archBox = document.getElementById("about-arch-svg");
+        var fsmBox = document.getElementById("about-fsm-svg");
+        if (archBox) archBox.innerHTML = window.CrmArchDiagrams.renderArchSvg();
+        if (fsmBox) fsmBox.innerHTML = window.CrmArchDiagrams.renderFsmSvg();
+      }
+
+      function currentTheme() {
+        try {
+          var raw = localStorage.getItem(STATE);
+          if (raw) {
+            var theme = JSON.parse(raw).theme;
+            if (theme === "dark" || theme === "light") return theme;
+          }
+        } catch (e) {}
+        return "light";
+      }
+
+      function apply(theme) {
+        document.documentElement.setAttribute("data-theme", theme === "dark" ? "dark" : "light");
+      }
+
+      function persist(theme) {
+        try {
+          var raw = localStorage.getItem(STATE);
+          if (!raw) return;
+          var state = JSON.parse(raw);
+          if (!state || typeof state !== "object") return;
+          state.theme = theme;
+          localStorage.setItem(STATE, JSON.stringify(state));
+        } catch (e) {}
+      }
+
+      apply(currentTheme());
+      document.getElementById("toggle-theme").addEventListener("click", function () {
+        var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        apply(next);
+        persist(next);
+      });
+    })();
+  </script>
+</body>
+</html>

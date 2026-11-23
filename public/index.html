@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="商机工作台静态交互演示：面向医疗器械 B2B 大客户经营，覆盖医院与经销商商机、临床评估、招采合规、客户记忆和受控 Agent 审批。" />
+  <title>商机工作台｜可信数据、受控执行与评测回归</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='15' fill='%23064e3b'/%3E%3Cpath d='M14 16h9.5L32 28.5 40.5 16H50L35.8 35.5V48h-7.6V35.5L14 16Z' fill='%23ecfdf5'/%3E%3Ccircle cx='49' cy='15' r='4' fill='%2322c55e'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="followups/followups.429e5d7b2d20.css" />
+</head>
+<body>
+  <div id="app"></div>
+  <script src="data.js"></script>
+  <script src="followups-state.js"></script>
+  <script src="views.js"></script>
+  <script src="app.js"></script>
+  <script src="welcome.js"></script>
+  <script>
+    /* Names and the publish ink are applied as the nodes appear, without
+       waiting for the module. A cached stylesheet cannot hide the label. */
+    (function () {
+      function textOf(el) {
+        return (el.innerText || "").replace(/\s+/g, " ").trim();
+      }
+      function paint(el) {
+        if (!el || el.nodeType !== 1 || !el.matches) return;
+        if (el.matches("[data-testid^='palette-add-']")) {
+          var label = textOf(el);
+          if (label) el.setAttribute("aria-label", label);
+        }
+        if (el.matches("button.bg-accent, button.text-accent-foreground")) {
+          var fg = getComputedStyle(document.documentElement).getPropertyValue("--color-accent-fg").trim() || "#ffffff";
+          el.style.setProperty("color", fg, "important");
+          el.style.setProperty("-webkit-text-fill-color", fg, "important");
+        }
+        var nested = el.querySelectorAll
+          ? el.querySelectorAll("[data-testid^='palette-add-'], button.bg-accent, button.text-accent-foreground")
+          : [];
+        for (var i = 0; i < nested.length; i++) paint(nested[i]);
+      }
+      new MutationObserver(function (records) {
+        for (var i = 0; i < records.length; i++) {
+          var added = records[i].addedNodes;
+          for (var j = 0; j < added.length; j++) paint(added[j]);
+        }
+      }).observe(document.documentElement, { childList: true, subtree: true });
+    })();
+  </script>
+  <script type="module" src="followups/followups.d84bc7f1c128.js"></script>
+</body>
+</html>

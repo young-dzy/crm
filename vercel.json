@@ -1,0 +1,14 @@
+{
+  "outputDirectory": "public",
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/mobile",
+      "destination": "/mobile.html"
+    },
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    }
+  ]
+}
